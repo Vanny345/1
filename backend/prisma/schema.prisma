@@ -279,12 +279,25 @@ model BankDetail {
   cleanerId String   @unique
   cleaner   Cleaner  @relation(fields: [cleanerId], references: [id])
   
-  bankName  String
-  accountType String // checking, savings
-  accountNumber String
-  routingNumber String
-  accountHolderName String
+  // Dados Bancários
+  bankCode  String?          // Ex: 001 (BB), 033 (Santander), 237 (Bradesco)
+  bankName  String?
+  accountType String?        // corrente, poupança
+  accountNumber String?      // Número da conta
+  accountDigit  String?      // Dígito verificador
+  accountHolderName String?  // Nome do titular
   
+  // PIX
+  pixKey    String?          // Chave PIX (email, cpf, phone, random)
+  pixKeyType String?         // email, cpf, phone, random
+  
+  // Preço por Hora
+  hourlyRate Float @default(75.00) // R$ 75,00 padrão
+  
+  // Dados para Transferências
+  preferredPaymentMethod String @default("pix") // pix, bankTransfer, both
+  
+  // Status
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

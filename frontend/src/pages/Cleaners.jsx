@@ -40,9 +40,25 @@ const Cleaners = () => {
   const handleBooking = async (e) => {
     e.preventDefault();
     try {
-      // Aqui você faria o agendamento de verdade
-      toast.success('Agendamento realizado com sucesso!');
-      navigate('/dashboard');
+      // Criar agendamento e redirecionar para pagamento
+      const bookingData = {
+        cleanerId: selectedCleaner.id,
+        ...bookingForm,
+        price: 150.00 // Preço estimado
+      };
+      
+      // Simular criação de agendamento e obter ID
+      const bookingId = 'booking-' + Date.now();
+      
+      toast.success('Agendamento criado! Redirecionando para pagamento...');
+      setTimeout(() => {
+        navigate(`/payment/${bookingId}`, { 
+          state: { 
+            booking: bookingData,
+            cleaner: selectedCleaner 
+          } 
+        });
+      }, 1000);
     } catch (error) {
       toast.error('Erro ao criar agendamento');
     }
@@ -74,26 +90,63 @@ const Cleaners = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cleaners.map((cleaner) => (
-              <div key={cleaner.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
-                {cleaner.photo && (
-                  <img src={cleaner.photo} alt={cleaner.name} className="w-full h-48 object-cover" />
-                )}
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-800">{cleaner.name}</h3>
-                  <div className="flex items-center gap-2 my-2">
-                    <span className="text-yellow-400">★</span>
-                    <span className="text-gray-700">{cleaner.averageRating.toFixed(1)}</span>
-                    <span className="text-gray-600 text-sm">({cleaner.reviewCount} avaliações)</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">Região: {cleaner.region}</p>
-                  {cleaner.bio && (
-                    <p className="text-sm text-gray-600 mb-4">{cleaner.bio}</p>
+              <div key={cleaner.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:scale-105">
+                {/* Foto */}
+                <div className="relative h-56 bg-gradient-to-br from-purple-200 to-pink-200 flex items-center justify-center overflow-hidden">
+                  {cleaner.photo ? (
+                    <img src={cleaner.photo} alt={cleaner.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="text-6xl">👩‍🔧</div>
                   )}
+                  {cleaner.verified && (
+                    <div className="absolute top-3 right-3 bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-5">
+                  {/* Nome */}
+                  <h3 className="text-xl font-bold text-gray-800 mb-1">{cleaner.name}</h3>
+                  
+                  {/* Rating */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex text-yellow-400">
+                      {[...Array(5)].map((_, i) => (
+                        <span key={i} className={i < Math.round(cleaner.averageRating) ? 'text-yellow-400' : 'text-gray-300'}>
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                    <span className="text-sm font-semibold text-gray-700">{cleaner.averageRating.toFixed(1)}</span>
+                    <span className="text-xs text-gray-500">({cleaner.reviewCount} reviews)</span>
+                  </div>
+
+                  {/* Info */}
+                  <div className="space-y-2 mb-4 pb-4 border-b border-gray-100">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">📍 Região:</span> {cleaner.region}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">📋 Agendamentos:</span> {cleaner.totalBookings}
+                    </p>
+                    {cleaner.bio && (
+                      <p className="text-sm text-gray-600 italic">"{cleaner.bio}"</p>
+                    )}
+                  </div>
+
+                  {/* Preço estimado */}
+                  <div className="bg-purple-50 rounded-lg p-3 mb-4 text-center">
+                    <p className="text-xs text-gray-600">Valor aproximado</p>
+                    <p className="text-xl font-bold text-purple-600">R$ 150,00</p>
+                    <p className="text-xs text-gray-500">por 2 horas</p>
+                  </div>
+
                   <button
                     onClick={() => setSelectedCleaner(cleaner)}
-                    className="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600"
+                    className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition"
                   >
-                    Agendar
+                    Agendar Agora
                   </button>
                 </div>
               </div>
