@@ -14,6 +14,9 @@ const uploadRoutes = require('./routes/uploads');
 const notificationRoutes = require('./routes/notifications');
 const discountRoutes = require('./routes/discounts');
 const disputeRoutes = require('./routes/disputes');
+const bonusRoutes = require('./routes/bonuses');
+const scheduleRoutes = require('./routes/schedules');
+const metricsRoutes = require('./routes/metrics');
 
 // Initialize Express
 const app = express();
@@ -38,6 +41,9 @@ app.use('/api/uploads', uploadRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/discounts', discountRoutes);
 app.use('/api/disputes', disputeRoutes);
+app.use('/api/bonuses', bonusRoutes);
+app.use('/api/schedules', scheduleRoutes);
+app.use('/api/metrics', metricsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

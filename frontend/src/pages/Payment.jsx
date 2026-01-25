@@ -12,6 +12,7 @@ const Payment = () => {
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [paymentStep, setPaymentStep] = useState('method');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [hasValidated, setHasValidated] = useState(false);
   
   const [cardData, setCardData] = useState({
     cardNumber: '',
@@ -27,6 +28,17 @@ const Payment = () => {
   const [boletoData] = useState({
     boletoCode: '00000.00000 00000.000000 00000.000000 0 00000000000000'
   });
+
+  // ✅ VALIDAÇÃO: Verificar se booking existe
+  useEffect(() => {
+    if (!hasValidated) {
+      setHasValidated(true);
+      if (!booking || !booking.id) {
+        toast.error('Agendamento não encontrado. Redirecionando...');
+        setTimeout(() => navigate('/checkout'), 2000);
+      }
+    }
+  }, [booking, hasValidated, navigate]);
 
   const formatCardNumber = (value) => {
     return value
@@ -71,18 +83,46 @@ const Payment = () => {
   };
 
   const processPayment = async () => {
+    // ✅ VALIDAÇÃO: Verificar dados de pagamento
     if (!validatePaymentData()) {
       toast.error('Preencha todos os campos obrigatórios');
       return;
     }
 
+    // ✅ VALIDAÇÃO: Verificar se booking ainda existe
+    if (!booking || !booking.id) {
+      toast.error('Agendamento inválido');
+      navigate('/checkout');
+      return;
+    }
+
     setIsProcessing(true);
     try {
+      const paymentData = {
+        bookingId: booking.id,
+        amount: booking.price || booking.estimatedPrice || 150.00,
+        method: paymentMethod,
+        currency: 'BRL',
+        description: `Pagamento - Faxineira ${cleaner?.name || 'N/A'}`
+      };
+
+      if (paymentMethod === 'card') {
+        paymentData.cardData = {
+          number: cardData.cardNumber.replace(/\s+/g, ''),
+          exp_month: parseInt(cardData.expiryDate.split('/')[0]),
+          exp_year: parseInt('20' + cardData.expiryDate.split('/')[1]),
+          cvc: cardData.cvv,
+          name: cardData.cardHolder
+        };
+      }
+
+      // Simular chamada ao backend
       await new Promise(resolve => setTimeout(resolve, 2000));
-      toast.success('Pagamento processado com sucesso!');
+      
+      toast.success('Pagamento processado com sucesso! ✅');
       setPaymentStep('success');
     } catch (error) {
-      toast.error('Erro ao processar pagamento. Tente novamente.');
+      toast.error(`Erro ao processar pagamento: ${error.message || 'Tente novamente'}`);
       console.error('Erro:', error);
     } finally {
       setIsProcessing(false);

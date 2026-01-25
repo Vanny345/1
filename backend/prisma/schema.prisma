@@ -58,6 +58,18 @@ model Cleaner {
   reviewCount   Int       @default(0)
   totalBookings Int       @default(0)
   
+  // 🏆 Bônus e Agilidade
+  consecutiveFiveStars Int @default(0)    // Contador de 5 estrelas seguidas
+  topCleanerBadge Boolean @default(false) // Badge TOP CLEANER ativo
+  topCleanerUntil DateTime?               // Data até quando mantém badge (30 dias)
+  totalBonusEarned Float @default(0)      // Total de bônus ganho
+  lastBonusDate DateTime?                 // Data do último bônus
+  
+  // ⏰ Agilidade Mensal
+  currentMonthCalls Int @default(0)       // Chamadas este mês
+  currentMonthAcceptance Float @default(0) // Taxa de aceitação
+  agilityScore Float @default(0)          // Score de agilidade (0-10)
+  
   // Status
   status        String    @default("active") // active, inactive, suspended, verified
   verified      Boolean   @default(false)
@@ -68,30 +80,99 @@ model Cleaner {
   bookings      Booking[]
   reviews       Review[]
   schedules     CleanerSchedule[]
+  weekSchedules CleanerWeekDay[]
+  availability  CleanerAvailability[]
   bankDetails   BankDetail?
   documents     Document[]
   notifications Notification[]
   disputes      Dispute[]
+  bonuses       CleanerBonus[]
+  metrics       CleanerMetrics[]
 
   @@index([region])
   @@index([email])
   @@index([status])
+  @@index([topCleanerBadge])
 }
 
-// Cleaner Weekly Schedule
+// Cleaner Schedule - Agenda Principal (Turnos Fixos ou Flexível)
 model CleanerSchedule {
   id        String   @id @default(cuid())
-  cleanerId String
+  cleanerId String   @unique
   cleaner   Cleaner  @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
-  dayOfWeek String   // monday, tuesday, etc
-  startTime String   // 08:00
-  endTime   String   // 18:00
-  isAvailable Boolean @default(true)
+  
+  // Tipo de agenda
+  scheduleType String @default("fixed") // "fixed" (turnos) ou "flexible" (dia a dia)
+  
+  // Configurações
+  timeSlotDuration Int @default(120)    // minutos para cada agendamento (ex: 120 = 2h)
+  minBookingInAdvance Int @default(24)  // horas antes que pode agendar
+  maxBookingsPerDay Int @default(5)     // máximo agendamentos por dia
+  
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  weekDays CleanerWeekDay[]
+
+  @@index([cleanerId])
+  @@index([scheduleType])
+}
+
+// Cleaner Week Day - Dias da semana (Para turnos fixos)
+model CleanerWeekDay {
+  id        String   @id @default(cuid())
+  scheduleId String
+  schedule  CleanerSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  cleanerId String
+  cleaner   Cleaner   @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  
+  dayOfWeek Int      // 0=DOM, 1=SEG, 2=TER, 3=QUA, 4=QUI, 5=SEX, 6=SAB
+  isWorking Boolean  @default(false)
+  
+  timeSlots CleanerTimeSlot[]
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([cleanerId, dayOfWeek])
+  @@unique([scheduleId, dayOfWeek])
   @@index([cleanerId])
+}
+
+// Cleaner Time Slot - Horários específicos de cada dia
+model CleanerTimeSlot {
+  id        String   @id @default(cuid())
+  weekDayId String
+  weekDay   CleanerWeekDay @relation(fields: [weekDayId], references: [id], onDelete: Cascade)
+  
+  startTime String   // "08:00"
+  endTime   String   // "12:00"
+  
+  createdAt DateTime @default(now())
+
+  @@index([weekDayId])
+}
+
+// Cleaner Availability - Disponibilidade Flexível (Para agenda dia a dia)
+model CleanerAvailability {
+  id        String   @id @default(cuid())
+  cleanerId String
+  cleaner   Cleaner  @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  
+  date      String   // "2026-02-15"
+  startTime String   // "08:00"
+  endTime   String   // "18:00"
+  
+  isBlocked Boolean  @default(false)  // true = bloqueado (férias, doença, etc)
+  reason    String?                   // "férias", "doença", "manutenção"
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cleanerId, date])
+  @@index([cleanerId])
+  @@index([date])
 }
 
 // Bookings/Agendamentos
@@ -317,6 +398,74 @@ model Document {
   updatedAt DateTime @updatedAt
 
   @@index([cleanerId])
+}
+
+// Cleaner Bonus - Bônus por Performance
+model CleanerBonus {
+  id        String   @id @default(cuid())
+  cleanerId String
+  cleaner   Cleaner  @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  
+  // Valor e motivo
+  amount    Float    // R$ 100,00 geralmente
+  reason    String   // "10_consecutive_five_stars", "milestone_100_bookings", etc
+  
+  // Status de transferência
+  status    String   @default("pending") // pending, transferred, failed
+  transferredAt DateTime?
+  failureReason String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cleanerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Cleaner Metrics - Métricas de Desempenho Mensal
+model CleanerMetrics {
+  id        String   @id @default(cuid())
+  cleanerId String
+  cleaner   Cleaner  @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  
+  // Período
+  year      Int      // 2026
+  month     Int      // 1-12
+  
+  // Chamadas/Convites
+  totalCalls Int @default(0)              // Total de chamadas/convites
+  acceptedCalls Int @default(0)           // Quantas aceitou
+  rejectedCalls Int @default(0)           // Quantas rejeitou
+  acceptanceRate Float @default(0)        // % (ex: 93.5)
+  
+  // Resposta
+  avgResponseTime Int @default(0)         // segundos (ex: 120 = 2min)
+  
+  // Conclusão
+  completedJobs Int @default(0)
+  cancelledJobs Int @default(0)
+  noShowJobs Int @default(0)
+  completionRate Float @default(0)        // % (ex: 100)
+  
+  // Avaliações
+  avgRating Float @default(0)             // ex: 4.9
+  totalReviewsReceived Int @default(0)
+  fiveStarReviews Int @default(0)
+  
+  // Score Final
+  agilityScore Float @default(0)          // 0-10
+  topPercentile Boolean @default(false)   // Top 5%?
+  ranking Int?                             // Posição no ranking
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cleanerId, year, month])
+  @@index([cleanerId])
+  @@index([year, month])
+  @@index([agilityScore])
+  @@index([topPercentile])
 }
 
 // Admin Logs

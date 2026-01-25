@@ -18,12 +18,36 @@ const Register = () => {
     region: ''
   });
   const [photo, setPhoto] = useState(null);
+  const [bankData, setBankData] = useState({
+    paymentMethod: 'pix', // 'pix' ou 'bank'
+    pixKey: '',
+    pixKeyType: 'phone', // phone, email, cpf, random
+    bankCode: '',
+    bankName: '',
+    accountType: 'corrente',
+    accountNumber: '',
+    accountDigit: '',
+    accountHolderName: '',
+    hourlyRate: '75.00'
+  });
   const { registerUser, registerCleaner, isLoading } = useAuthStore();
 
   const regions = ['Centro', 'Zona Norte', 'Zona Sul', 'Zona Leste', 'Zona Oeste', 'Metropolitana'];
+  const bankCodes = [
+    { code: '001', name: 'Banco do Brasil' },
+    { code: '033', name: 'Santander' },
+    { code: '237', name: 'Bradesco' },
+    { code: '104', name: 'Caixa' },
+    { code: '041', name: 'Banrisul' },
+    { code: '077', name: 'Inter' }
+  ];
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleBankChange = (e) => {
+    setBankData({ ...bankData, [e.target.name]: e.target.value });
   };
 
   const handlePhotoChange = (e) => {
@@ -50,10 +74,28 @@ const Register = () => {
       if (userType === 'user') {
         await registerUser(formData.email, formData.password, formData.name, formData.phone);
       } else {
+        // Para faxineira, garantir que tem dados de pagamento
+        if (!bankData.pixKey && !bankData.accountNumber) {
+          toast.error('Preencha PIX ou dados bancários');
+          return;
+        }
+        
         await registerCleaner({
           ...formData,
           dateOfBirth: new Date(`${formData.age}-01-01`),
-          photo: photo || 'https://via.placeholder.com/200'
+          photo: photo || 'https://via.placeholder.com/200',
+          bankDetails: {
+            paymentMethod: bankData.paymentMethod,
+            pixKey: bankData.pixKey,
+            pixKeyType: bankData.pixKeyType,
+            bankCode: bankData.bankCode,
+            bankName: bankData.bankName,
+            accountType: bankData.accountType,
+            accountNumber: bankData.accountNumber,
+            accountDigit: bankData.accountDigit,
+            accountHolderName: bankData.accountHolderName,
+            hourlyRate: parseFloat(bankData.hourlyRate)
+          }
         });
       }
       toast.success('Cadastro realizado com sucesso!');
@@ -219,6 +261,168 @@ const Register = () => {
                     </label>
                   </div>
                 </div>
+
+                {/* Preço por Hora */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">💰 Preço por Hora (R$)</label>
+                  <input
+                    type="number"
+                    name="hourlyRate"
+                    value={bankData.hourlyRate}
+                    onChange={handleBankChange}
+                    required
+                    step="0.01"
+                    min="20"
+                    max="500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="75.00"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Padrão: R$ 75,00/hora</p>
+                </div>
+
+                {/* Método de Pagamento */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">💳 Como deseja receber pagamentos?</label>
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer"
+                           style={bankData.paymentMethod === 'pix' ? { borderColor: '#a855f7' } : {}}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="pix"
+                        checked={bankData.paymentMethod === 'pix'}
+                        onChange={handleBankChange}
+                      />
+                      <span className="font-semibold">🟢 PIX (Instantâneo)</span>
+                    </label>
+                    <label className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer"
+                           style={bankData.paymentMethod === 'bank' ? { borderColor: '#a855f7' } : {}}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="bank"
+                        checked={bankData.paymentMethod === 'bank'}
+                        onChange={handleBankChange}
+                      />
+                      <span className="font-semibold">🏦 Conta Bancária (24h)</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* PIX */}
+                {bankData.paymentMethod === 'pix' && (
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-200 space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Chave PIX</label>
+                      <input
+                        type="text"
+                        name="pixKey"
+                        value={bankData.pixKey}
+                        onChange={handleBankChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="Insira sua chave PIX"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Chave</label>
+                      <select
+                        name="pixKeyType"
+                        value={bankData.pixKeyType}
+                        onChange={handleBankChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      >
+                        <option value="phone">Telefone</option>
+                        <option value="cpf">CPF</option>
+                        <option value="email">Email</option>
+                        <option value="random">Aleatória</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {/* Conta Bancária */}
+                {bankData.paymentMethod === 'bank' && (
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Banco</label>
+                      <select
+                        name="bankCode"
+                        value={bankData.bankCode}
+                        onChange={handleBankChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="">Selecione um banco</option>
+                        {bankCodes.map((bank) => (
+                          <option key={bank.code} value={bank.code}>{bank.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Conta</label>
+                      <select
+                        name="accountType"
+                        value={bankData.accountType}
+                        onChange={handleBankChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="corrente">Conta Corrente</option>
+                        <option value="poupanca">Conta Poupança</option>
+                      </select>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Número</label>
+                        <input
+                          type="text"
+                          name="accountNumber"
+                          value={bankData.accountNumber}
+                          onChange={handleBankChange}
+                          required
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                          placeholder="123456"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Dígito</label>
+                        <input
+                          type="text"
+                          name="accountDigit"
+                          value={bankData.accountDigit}
+                          onChange={handleBankChange}
+                          required
+                          maxLength="1"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                          placeholder="7"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Agência</label>
+                        <input
+                          type="text"
+                          name="bankAgency"
+                          value={bankData.bankAgency || ''}
+                          onChange={handleBankChange}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                          placeholder="0001"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Nome do Titular</label>
+                      <input
+                        type="text"
+                        name="accountHolderName"
+                        value={bankData.accountHolderName}
+                        onChange={handleBankChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Seu nome completo"
+                      />
+                    </div>
+                  </div>
+                )}
               </>
             )}
 

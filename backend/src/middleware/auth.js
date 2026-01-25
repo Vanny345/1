@@ -8,7 +8,7 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: 'Access token required' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET || 'test-secret', (err, user) => {
     if (err) {
       return res.status(403).json({ error: 'Invalid or expired token' });
     }
@@ -31,4 +31,9 @@ const authorizeRole = (allowedRoles) => {
   };
 };
 
-module.exports = { authenticateToken, authorizeRole };
+// Export com alias para compatibilidade
+module.exports = { 
+  authenticateToken,
+  authMiddleware: authenticateToken, // Alias para routes
+  authorizeRole
+};

@@ -22,8 +22,8 @@ class PaymentService {
         publishableKey: process.env.STRIPE_PUBLIC_KEY
       };
     } catch (error) {
-      console.error('Erro ao criar Stripe payment intent:', error);
-      throw error;
+      const errorMessage = error?.message || 'Erro ao criar payment intent';
+      throw new Error(`[Stripe] ${errorMessage}`);
     }
   }
 
@@ -33,8 +33,8 @@ class PaymentService {
       const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
       return paymentIntent.status === 'succeeded';
     } catch (error) {
-      console.error('Erro ao confirmar pagamento Stripe:', error);
-      throw error;
+      const errorMessage = error?.message || 'Erro ao confirmar pagamento';
+      throw new Error(`[Stripe] ${errorMessage}`);
     }
   }
 
