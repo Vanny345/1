@@ -2318,8 +2318,217 @@
         });
 
         /* ════════════════════════════════════════════════════════════════════════ */
-        /* SEÇÃO 7: SISTEMA DE AUTENTICAÇÃO                                       */
+        /* SEÇÃO 7B: SISTEMA DE CADASTRO DE FAXINEIRAS                             */
         /* ════════════════════════════════════════════════════════════════════════ */
+        const cleanerSystem = {
+            cleaners: JSON.parse(localStorage.getItem('leidyCleaners') || '[]'),
+            
+            registerCleaner(data) {
+                // Validar dados
+                if (!data.name || !data.cpf || !data.age || !data.region || !data.email || !data.phone) {
+                    showNotification('Preencha todos os campos obrigatórios', 'error');
+                    return false;
+                }
+                
+                // Validar CPF (formato básico)
+                if (!/^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(data.cpf)) {
+                    showNotification('CPF deve estar no formato: 123.456.789-00', 'error');
+                    return false;
+                }
+                
+                // Validar idade
+                if (data.age < 18 || data.age > 80) {
+                    showNotification('Idade deve estar entre 18 e 80 anos', 'error');
+                    return false;
+                }
+                
+                const cleaner = {
+                    id: Date.now(),
+                    name: data.name,
+                    cpf: data.cpf,
+                    age: parseInt(data.age),
+                    region: data.region,
+                    email: data.email,
+                    phone: data.phone,
+                    photo: data.photo || '', // URL ou base64
+                    bio: data.bio || '',
+                    ratings: [],
+                    averageRating: 5.0,
+                    reviewCount: 0,
+                    totalBookings: 0,
+                    weekSchedule: this.createEmptySchedule(),
+                    createdAt: new Date().toISOString(),
+                    status: 'active'
+                };
+                
+                // Verificar se email já existe
+                if (this.cleaners.some(c => c.email === data.email)) {
+                    showNotification('Email já cadastrado', 'error');
+                    return false;
+                }
+                
+                this.cleaners.push(cleaner);
+                localStorage.setItem('leidyCleaners', JSON.stringify(this.cleaners));
+                showNotification(`Faxineira ${data.name} cadastrada com sucesso!`, 'success');
+                return cleaner;
+            },
+            
+            createEmptySchedule() {
+                const schedule = {};
+                const days = ['segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado', 'domingo'];
+                const hours = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'];
+                
+                days.forEach(day => {
+                    schedule[day] = {};
+                    hours.forEach(hour => {
+                        schedule[day][hour] = { available: true, booked: false };
+                    });
+                });
+                return schedule;
+            },
+            
+            getCleanersByRegion(region) {
+                return this.cleaners.filter(c => c.region === region && c.status === 'active');
+            },
+            
+            getCleanerById(id) {
+                return this.cleaners.find(c => c.id == id);
+            },
+            
+            updateRating(cleanerId, rating) {
+                const cleaner = this.getCleanerById(cleanerId);
+                if (!cleaner) return;
+                
+                cleaner.ratings.push(rating);
+                cleaner.reviewCount = cleaner.ratings.length;
+                cleaner.averageRating = cleaner.ratings.reduce((a, b) => a + b, 0) / cleaner.ratings.length;
+                localStorage.setItem('leidyCleaners', JSON.stringify(this.cleaners));
+            },
+            
+            showRegisterModal() {
+                const regions = ['Centro', 'Zona Norte', 'Zona Sul', 'Zona Leste', 'Zona Oeste', 'Região Metropolitana'];
+                
+                const modal = `
+                    <div style="max-width:700px;width:100%">
+                        <h2 style="color:var(--primary);margin-bottom:20px"><i class="fas fa-user-plus"></i> Cadastro de Faxineira</h2>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px">
+                            <div>
+                                <label style="display:block;margin-bottom:8px;font-weight:600">Nome Completo *</label>
+                                <input type="text" id="cleanerName" placeholder="Ex: Maria Silva" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                            </div>
+                            <div>
+                                <label style="display:block;margin-bottom:8px;font-weight:600">CPF *</label>
+                                <input type="text" id="cleanerCPF" placeholder="123.456.789-00" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                            </div>
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px">
+                            <div>
+                                <label style="display:block;margin-bottom:8px;font-weight:600">Idade *</label>
+                                <input type="number" id="cleanerAge" min="18" max="80" placeholder="25" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                            </div>
+                            <div>
+                                <label style="display:block;margin-bottom:8px;font-weight:600">Região *</label>
+                                <select id="cleanerRegion" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                                    <option value="">Selecione...</option>
+                                    ${regions.map(r => `<option value="${r}">${r}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px">
+                            <div>
+                                <label style="display:block;margin-bottom:8px;font-weight:600">Email *</label>
+                                <input type="email" id="cleanerEmail" placeholder="maria@example.com" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                            </div>
+                            <div>
+                                <label style="display:block;margin-bottom:8px;font-weight:600">Telefone *</label>
+                                <input type="tel" id="cleanerPhone" placeholder="(51) 9999-9999" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom:15px">
+                            <label style="display:block;margin-bottom:8px;font-weight:600">Foto (URL) *</label>
+                            <input type="text" id="cleanerPhoto" placeholder="https://exemplo.com/foto.jpg" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                            <small style="color:var(--text-secondary)">Use Imgur, Unsplash ou similar para hospedar a foto</small>
+                        </div>
+                        
+                        <div style="margin-bottom:15px">
+                            <label style="display:block;margin-bottom:8px;font-weight:600">Sobre (Bio)</label>
+                            <textarea id="cleanerBio" placeholder="Fale sobre sua experiência..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font);min-height:80px;resize:vertical"></textarea>
+                        </div>
+                        
+                        <div style="display:flex;gap:10px">
+                            <button class="btn btn-primary" style="flex:1" onclick="cleanerSystem.saveCleanerForm()"><i class="fas fa-check"></i> Cadastrar</button>
+                            <button class="btn btn-outline" style="flex:1" onclick="closeModal('cleanerRegisterModal')">Cancelar</button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('cleanerRegisterModal').innerHTML = modal;
+                openModal('cleanerRegisterModal');
+            },
+            
+            saveCleanerForm() {
+                const data = {
+                    name: document.getElementById('cleanerName').value,
+                    cpf: document.getElementById('cleanerCPF').value,
+                    age: document.getElementById('cleanerAge').value,
+                    region: document.getElementById('cleanerRegion').value,
+                    email: document.getElementById('cleanerEmail').value,
+                    phone: document.getElementById('cleanerPhone').value,
+                    photo: document.getElementById('cleanerPhoto').value,
+                    bio: document.getElementById('cleanerBio').value
+                };
+                
+                this.registerCleaner(data);
+                if (data.region) {
+                    closeModal('cleanerRegisterModal');
+                    this.showCleanersList();
+                }
+            },
+            
+            showCleanersList(filterRegion = null) {
+                const list = filterRegion ? this.getCleanersByRegion(filterRegion) : this.cleaners;
+                const cleanersList = document.getElementById('cleanersList');
+                
+                if (list.length === 0) {
+                    cleanersList.innerHTML = `
+                        <div style="text-align:center;padding:40px;color:var(--text-secondary)">
+                            <i class="fas fa-info-circle" style="font-size:2rem;margin-bottom:10px;display:block"></i>
+                            <p>Nenhuma faxineira cadastrada ${filterRegion ? 'nesta região' : ''}.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                cleanersList.innerHTML = list.map(cleaner => `
+                    <div class="cleaner-card" data-cleaner-id="${cleaner.id}">
+                        <div style="width:80px;height:80px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--bg-secondary);display:flex;align-items:center;justify-content:center">
+                            ${cleaner.photo ? `<img src="${cleaner.photo}" style="width:100%;height:100%;object-fit:cover">` : `<i class="fas fa-user" style="font-size:2rem;color:var(--primary)"></i>`}
+                        </div>
+                        <div style="flex:1">
+                            <div style="font-weight:600;font-size:1.1rem">${cleaner.name}</div>
+                            <div style="color:var(--text-secondary);font-size:0.9rem">⭐ ${cleaner.averageRating.toFixed(1)} (${cleaner.reviewCount} avaliações)</div>
+                            <div style="color:var(--primary);font-size:0.85rem;margin:5px 0">📍 ${cleaner.region}</div>
+                            <div style="font-size:0.85rem;color:var(--text-secondary)">${cleaner.bio}</div>
+                            <div style="display:flex;gap:8px;margin-top:10px;font-size:0.8rem">
+                                <span style="background:var(--bg-secondary);padding:4px 8px;border-radius:4px">👤 ${cleaner.age} anos</span>
+                                <span style="background:var(--bg-secondary);padding:4px 8px;border-radius:4px">📞 ${cleaner.phone}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:10px">
+                            <button class="btn btn-secondary" style="padding:8px 12px;font-size:0.9rem" onclick="reviewSystem.showReviewModal('${cleaner.id}')"><i class="fas fa-star"></i> Avaliar</button>
+                            <button class="btn btn-primary" style="padding:8px 12px;font-size:0.9rem" onclick="paymentSystem.initCheckout()"><i class="fas fa-calendar"></i> Agendar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        };
+        
+        // Inicializar lista de faxineiras
+        cleanerSystem.showCleanersList();
+
         const authSystem = {
             users: JSON.parse(localStorage.getItem('leidyUsers') || '{}'),
             currentUser: JSON.parse(localStorage.getItem('leidyCurrentUser') || 'null'),
@@ -2344,12 +2553,18 @@
                 return true;
             },
             
-            login(email, password) {
+            login(email, password, type = 'customer') {
                 const user = this.users[email];
                 if (!user || user.password !== btoa(password)) {
                     showNotification('E-mail ou senha inválidos', 'error');
                     return false;
                 }
+                
+                if (user.type !== type && type !== 'admin') {
+                    showNotification(`Usuário é ${user.type}, não ${type}`, 'error');
+                    return false;
+                }
+                
                 this.currentUser = { email, name: user.name, type: user.type };
                 localStorage.setItem('leidyCurrentUser', JSON.stringify(this.currentUser));
                 showNotification(`Bem-vindo, ${user.name}!`, 'success');
@@ -2369,10 +2584,34 @@
                 if (this.currentUser) {
                     authBtn.innerHTML = `<i class="fas fa-user"></i> ${this.currentUser.name} <button onclick="authSystem.logout()" style="margin-left:10px;padding:5px 10px;background:#EF4444;color:white;border:0;border-radius:5px;cursor:pointer">Sair</button>`;
                 } else {
-                    authBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar / Cadastro';
+                    authBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
                 }
             }
         };
+        
+        // Função para trocar aba de autenticação
+        function switchAuthTab(tab) {
+            const clientAuth = document.getElementById('clientAuth');
+            const cleanerAuth = document.getElementById('cleanerAuth');
+            const clientTab = document.getElementById('clientTab');
+            const cleanerTab = document.getElementById('cleanerTab');
+            
+            if (tab === 'client') {
+                clientAuth.style.display = 'block';
+                cleanerAuth.style.display = 'none';
+                clientTab.style.background = 'var(--gradient-primary)';
+                clientTab.style.color = 'white';
+                cleanerTab.style.background = 'white';
+                cleanerTab.style.color = 'var(--text)';
+            } else {
+                clientAuth.style.display = 'none';
+                cleanerAuth.style.display = 'block';
+                clientTab.style.background = 'white';
+                clientTab.style.color = 'var(--text)';
+                cleanerTab.style.background = 'var(--gradient-primary)';
+                cleanerTab.style.color = 'white';
+            }
+        }
         
         // Inicializar autenticação ao carregar
         authSystem.updateAuthUI();
@@ -2725,7 +2964,8 @@
         /* SEÇÃO 11: INTEGRAÇÃO WHATSAPP                                           */
         /* ════════════════════════════════════════════════════════════════════════ */
         const whatsappIntegration = {
-            phoneNumber: '5584999999999', // Número da Leidy
+            phoneNumber: '5551980303740', // Número da Leidy sem formatação
+            phoneDisplay: '+55 51 8030-3740', // Para exibição
             
             sendBookingConfirmation(booking) {
                 const message = `Olá! 🎉\n\nSeu agendamento foi confirmado!\n\n📋 Serviço: ${booking.service}\n⏱️ Duração: ${booking.hours}h\n👩‍🔧 Faxineiras: ${booking.cleaners}\n💰 Total: R$ ${booking.total.toFixed(2)}\n\nClique no link abaixo para mais detalhes:\nhttps://leidycleaner.com/booking/${booking.id}`;
@@ -2991,21 +3231,36 @@
                 <button onclick="closeModal('authModal')" style="background:0;border:0;font-size:1.5rem;cursor:pointer">×</button>
             </div>
             
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
-                <div style="border-right:1px solid var(--border);padding-right:20px">
-                    <h3 style="color:var(--text);margin-bottom:15px"><i class="fas fa-sign-in-alt"></i> Fazer Login</h3>
-                    <input type="email" id="loginEmail" placeholder="E-mail" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
-                    <input type="password" id="loginPassword" placeholder="Senha" style="width:100%;padding:10px;margin-bottom:15px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
-                    <button class="btn btn-primary" style="width:100%" onclick="authSystem.login(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);closeModal('authModal')"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+            <div style="display:flex;gap:10px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:10px">
+                <button class="btn btn-primary" style="flex:1;background:var(--gradient-primary);color:white" id="clientTab" onclick="switchAuthTab('client')"><i class="fas fa-user"></i> Cliente</button>
+                <button class="btn btn-outline" style="flex:1;background:white;color:var(--text);border:1px solid var(--border)" id="cleanerTab" onclick="switchAuthTab('cleaner')"><i class="fas fa-broom"></i> Faxineira</button>
+            </div>
+            
+            <!-- ABA CLIENTE -->
+            <div id="clientAuth" style="display:block">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+                    <div style="border-right:1px solid var(--border);padding-right:20px">
+                        <h3 style="color:var(--text);margin-bottom:15px"><i class="fas fa-sign-in-alt"></i> Fazer Login</h3>
+                        <input type="email" id="loginEmail" placeholder="E-mail" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                        <input type="password" id="loginPassword" placeholder="Senha" style="width:100%;padding:10px;margin-bottom:15px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                        <button class="btn btn-primary" style="width:100%" onclick="authSystem.login(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value, 'customer');closeModal('authModal')"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+                    </div>
+                    
+                    <div style="padding-left:20px">
+                        <h3 style="color:var(--text);margin-bottom:15px"><i class="fas fa-user-plus"></i> Criar Conta</h3>
+                        <input type="text" id="signupName" placeholder="Seu Nome" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                        <input type="email" id="signupEmail" placeholder="E-mail" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                        <input type="password" id="signupPassword" placeholder="Senha" style="width:100%;padding:10px;margin-bottom:15px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
+                        <button class="btn btn-secondary" style="width:100%" onclick="authSystem.register(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value, document.getElementById('signupName').value, 'customer');closeModal('authModal')"><i class="fas fa-user-plus"></i> Cadastrar</button>
+                    </div>
                 </div>
-                
-                <div style="padding-left:20px">
-                    <h3 style="color:var(--text);margin-bottom:15px"><i class="fas fa-user-plus"></i> Criar Conta</h3>
-                    <input type="text" id="signupName" placeholder="Seu Nome" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
-                    <input type="email" id="signupEmail" placeholder="E-mail" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
-                    <input type="password" id="signupPassword" placeholder="Senha" style="width:100%;padding:10px;margin-bottom:15px;border:1px solid var(--border);border-radius:8px;font-family:var(--font)">
-                    <button class="btn btn-secondary" style="width:100%" onclick="authSystem.register(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value, document.getElementById('signupName').value);closeModal('authModal')"><i class="fas fa-user-plus"></i> Cadastrar</button>
-                </div>
+            </div>
+            
+            <!-- ABA FAXINEIRA -->
+            <div id="cleanerAuth" style="display:none;padding:20px;background:var(--bg-secondary);border-radius:8px;margin-bottom:20px">
+                <h3 style="color:var(--primary);margin-bottom:15px"><i class="fas fa-broom"></i> Cadastro de Faxineira</h3>
+                <p style="color:var(--text-secondary);margin-bottom:15px">Preencha seus dados para se registrar como faxineira</p>
+                <button class="btn btn-primary" style="width:100%" onclick="cleanerSystem.showRegisterModal();closeModal('authModal')"><i class="fas fa-user-plus"></i> Cadastrar como Faxineira</button>
             </div>
             
             <button class="btn btn-outline" style="width:100%" onclick="closeModal('authModal')">Cancelar</button>
@@ -3039,6 +3294,11 @@
 
     <!-- Modal: Customização do Site -->
     <div id="customizationModal" class="modal">
+        <div class="modal-content"></div>
+    </div>
+
+    <!-- Modal: Cadastro de Faxineira -->
+    <div id="cleanerRegisterModal" class="modal">
         <div class="modal-content"></div>
     </div>
 
