@@ -1,0 +1,315 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users (Clients/Customers)
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  phone         String?
+  cpf           String?   @unique
+  dateOfBirth   DateTime?
+  address       String?
+  city          String?
+  state         String?
+  postalCode    String?
+  profilePhoto  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  bookings      Booking[]
+  reviews       Review[]
+  notifications Notification[]
+  disputes      Dispute[]
+
+  @@index([email])
+  @@index([city])
+}
+
+// Cleaners (Faxineiras)
+model Cleaner {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  phone         String
+  cpf           String    @unique
+  dateOfBirth   DateTime
+  age           Int
+  region        String
+  bio           String?
+  photo         String?
+  nationalId    String?   // For identity verification
+  bankAccount   String?   // For payouts
+  
+  // Rating info
+  averageRating Float     @default(0)
+  reviewCount   Int       @default(0)
+  totalBookings Int       @default(0)
+  
+  // Status
+  status        String    @default("active") // active, inactive, suspended, verified
+  verified      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  bookings      Booking[]
+  reviews       Review[]
+  schedules     CleanerSchedule[]
+  bankDetails   BankDetail?
+  documents     Document[]
+  notifications Notification[]
+  disputes      Dispute[]
+
+  @@index([region])
+  @@index([email])
+  @@index([status])
+}
+
+// Cleaner Weekly Schedule
+model CleanerSchedule {
+  id        String   @id @default(cuid())
+  cleanerId String
+  cleaner   Cleaner  @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  dayOfWeek String   // monday, tuesday, etc
+  startTime String   // 08:00
+  endTime   String   // 18:00
+  isAvailable Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cleanerId, dayOfWeek])
+  @@index([cleanerId])
+}
+
+// Bookings/Agendamentos
+model Booking {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  cleanerId    String
+  cleaner      Cleaner  @relation(fields: [cleanerId], references: [id])
+  
+  // Booking details
+  date         DateTime
+  startTime    String
+  endTime      String
+  address      String
+  city         String
+  latitude     Float?
+  longitude    Float?
+  serviceType  String   // standard, deep-clean, etc
+  notes        String?
+  duration     Int      // in minutes
+  
+  // Pricing
+  estimatedPrice Float
+  finalPrice     Float?
+  
+  // Status
+  status       String   @default("confirmed") // pending, confirmed, completed, cancelled, no-show
+  paymentStatus String  @default("pending")   // pending, completed, refunded
+  cancellationReason String?
+  cancelledAt  DateTime?
+  completedAt  DateTime?
+  
+  // Relations
+  payment      Payment?
+  review       Review?
+  dispute      Dispute?
+  history      BookingHistory[]
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+  @@index([cleanerId])
+  @@index([date])
+  @@index([status])
+}
+
+// Booking History (for tracking changes)
+model BookingHistory {
+  id        String   @id @default(cuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  action    String   // created, updated, cancelled, completed
+  details   String   // JSON string with changed fields
+  createdAt DateTime @default(now())
+
+  @@index([bookingId])
+}
+
+// Payments
+model Payment {
+  id            String   @id @default(cuid())
+  bookingId     String   @unique
+  booking       Booking  @relation(fields: [bookingId], references: [id])
+  
+  // Payment details
+  amount        Float
+  method        String   // card, pix, boleto
+  paymentGateway String // stripe, mercadopago
+  transactionId String   @unique
+  
+  // Stripe/MercadoPago details
+  stripePaymentIntentId String?
+  mercadopagoPaymentId  String?
+  
+  status        String   @default("pending") // pending, completed, failed, refunded
+  receiptUrl    String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  refundedAt    DateTime?
+
+  @@index([bookingId])
+  @@index([status])
+}
+
+// Reviews/Ratings
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  cleanerId String
+  cleaner   Cleaner  @relation(fields: [cleanerId], references: [id])
+  bookingId String    @unique
+  booking   Booking   @relation(fields: [bookingId], references: [id])
+  
+  rating    Int      // 1-5
+  comment   String?
+  
+  // Additional ratings
+  punctuality Int?   // 1-5
+  professionalism Int? // 1-5
+  quality     Int?   // 1-5
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cleanerId])
+  @@index([userId])
+}
+
+// Notifications
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  cleanerId String?
+  cleaner   Cleaner? @relation(fields: [cleanerId], references: [id], onDelete: SetNull)
+  
+  title     String
+  message   String
+  type      String   // booking_confirmed, payment_received, review_received, etc
+  read      Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([cleanerId])
+  @@index([read])
+}
+
+// Discounts/Coupons
+model Discount {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  description String?
+  
+  discountType String // percentage, fixed
+  discountValue Float
+  
+  minBookingAmount Float?
+  maxUses       Int?
+  currentUses   Int    @default(0)
+  
+  validFrom    DateTime
+  validUntil   DateTime
+  
+  active       Boolean @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([code])
+  @@index([validFrom])
+}
+
+// Disputes
+model Dispute {
+  id        String   @id @default(cuid())
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  cleanerId String
+  cleaner   Cleaner  @relation(fields: [cleanerId], references: [id])
+  
+  reason    String
+  description String?
+  evidence  String[] // URLs to photos/videos
+  
+  status    String   @default("open") // open, investigating, resolved, closed
+  resolution String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  resolvedAt DateTime?
+
+  @@index([status])
+  @@index([userId])
+  @@index([cleanerId])
+}
+
+// Bank Details for Payouts
+model BankDetail {
+  id        String   @id @default(cuid())
+  cleanerId String   @unique
+  cleaner   Cleaner  @relation(fields: [cleanerId], references: [id])
+  
+  bankName  String
+  accountType String // checking, savings
+  accountNumber String
+  routingNumber String
+  accountHolderName String
+  
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Documents (for cleaner verification)
+model Document {
+  id        String   @id @default(cuid())
+  cleanerId String
+  cleaner   Cleaner  @relation(fields: [cleanerId], references: [id], onDelete: Cascade)
+  
+  type      String   // id, proof_of_address, certification
+  url       String
+  verified  Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cleanerId])
+}
+
+// Admin Logs
+model AdminLog {
+  id        String   @id @default(cuid())
+  action    String
+  details   String   // JSON string
+  createdAt DateTime @default(now())
+}
