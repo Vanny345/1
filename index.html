@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Leidy Cleaner - Sistema Inteligente de Agendamento de Faxina com Calculadora em Tempo Real">
+    <meta name="theme-color" content="#10B981">
+    <title>Leidy Cleaner | Sistema Inteligente de Limpeza Premium v2.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {--primary:#10B981;--primary-light:#34D399;--primary-dark:#059669;--secondary:#3B82F6;--accent:#F59E0B;--danger:#EF4444;--success:#10B981;--gradient-primary:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);--gradient-secondary:linear-gradient(135deg,var(--secondary) 0%,#60A5FA 100%);--gradient-accent:linear-gradient(135deg,var(--accent) 0%,#FBBF24 100%);--bg:#F8FAFC;--bg-secondary:#F1F5F9;--bg-card:#FFF;--text:#1E293B;--text-secondary:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;--border-light:#F1F5F9;--shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 4px 6px -1px rgba(0,0,0,.1);--shadow-md:0 10px 15px -3px rgba(0,0,0,.1);--shadow-lg:0 20px 25px -5px rgba(0,0,0,.1);--shadow-xl:0 25px 50px -12px rgba(0,0,0,.25);--radius-sm:8px;--radius:12px;--radius-lg:16px;--space-xs:.5rem;--space-sm:1rem;--space-md:1.5rem;--space-lg:2rem;--space-xl:3rem;--space-2xl:4rem;--space-3xl:6rem;--transition:.3s ease;--font:Inter,system-ui,-apple-system,sans-serif}[data-theme="soft"]{--bg:#FDFCFB;--bg-secondary:#F9F5F2;--bg-card:#FFF;--text:#5D4037;--text-secondary:#8D6E63;--text-muted:#BCAAA4;--border:#E0E0E0;--primary:#FF9800;--primary-light:#FFB74D}[data-theme="neutral"]{--bg:#FAFAFA;--bg-secondary:#F5F5F5;--bg-card:#FFF;--text:#424242;--text-secondary:#757575;--text-muted:#BDBDBD;--border:#E0E0E0;--primary:#607D8B;--primary-light:#90A4AE}[data-theme="high-contrast"]{--bg:#FFF;--bg-secondary:#F0F0F0;--bg-card:#FFF;--text:#000;--text-secondary:#333;--text-muted:#666;--border:#000;--primary:#000;--primary-light:#333}[data-theme="pastel"]{--bg:#FFF9F9;--bg-secondary:#F5F0FF;--bg-card:#FFF;--text:#5D4037;--text-secondary:#8A7F8D;--text-muted:#C5B9CD;--border:#E8DEF8;--primary:#BA68C8;--primary-light:#E1BEE7}[data-theme="dark"]{--bg:#121212;--bg-secondary:#1E1E1E;--bg-card:#2D2D2D;--text:#FFF;--text-secondary:#B0B0B0;--text-muted:#666;--border:#404040}*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:80px}body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;transition:var(--transition);padding-top:80px}.container{max-width:1280px;margin:0 auto;padding:0 var(--space-md)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes slideIn{from{transform:translateX(-30px);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}.card{background:var(--bg-card);border-radius:var(--radius);padding:var(--space-lg);box-shadow:var(--shadow);border:1px solid var(--border);transition:var(--transition)}.card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-sm);padding:var(--space-sm) var(--space-lg);border-radius:var(--radius);font-weight:600;font-size:.95rem;cursor:pointer;transition:var(--transition);border:none;text-decoration:none}.btn-primary{background:var(--gradient-primary);color:#fff}.btn-secondary{background:var(--gradient-secondary);color:#fff}.btn-outline{background:0;border:2px solid var(--primary);color:var(--primary)}.btn-lg{padding:var(--space-md) var(--space-xl);font-size:1.1rem}.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:var(--shadow-md)}.btn:disabled{opacity:.5;cursor:not-allowed}.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;background:var(--bg-secondary);color:var(--text)}.badge-primary{background:var(--gradient-primary);color:#fff}.badge-success{background:var(--success);color:#fff}.header{position:fixed;top:0;left:0;right:0;background:rgba(var(--bg-card-rgb),0.95);backdrop-filter:blur(10px);z-index:1000;border-bottom:1px solid var(--border);transition:var(--transition)}.header.scrolled{box-shadow:var(--shadow-lg)}.header-content{display:flex;align-items:center;justify-content:space-between;padding:var(--space-sm) 0}.logo{display:flex;align-items:center;gap:var(--space-sm);text-decoration:none}.logo-icon{width:48px;height:48px;background:var(--gradient-primary);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;animation:pulse 2s infinite}.logo-text h1{font-size:1.5rem;font-weight:800;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}.logo-text span{font-size:.75rem;color:var(--text-secondary)}.nav-menu{display:flex;gap:var(--space-md)}.theme-controls{position:fixed;top:100px;right:var(--space-lg);display:flex;flex-direction:column;gap:var(--space-sm);z-index:999;background:var(--bg-card);border-radius:var(--radius);padding:var(--space-sm);box-shadow:var(--shadow-lg);border:1px solid var(--border)}.theme-btn{width:40px;height:40px;border-radius:var(--radius-sm);border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:var(--transition);position:relative}.theme-btn.active{transform:scale(1.1);box-shadow:var(--shadow)}.theme-btn:hover{transform:translateY(-2px)}.theme-btn[data-theme="light"]{background:#F8FAFC;color:#1E293B}.theme-btn[data-theme="soft"]{background:#FDFCFB;color:#5D4037}.theme-btn[data-theme="neutral"]{background:#FAFAFA;color:#424242}.theme-btn[data-theme="high-contrast"]{background:#FFF;color:#000}.theme-btn[data-theme="pastel"]{background:#FFF9F9;color:#5D4037}.theme-btn[data-theme="dark"]{background:#121212;color:#FFF}.calculator-section{padding:var(--space-3xl) 0;background:var(--bg-secondary);min-height:100vh;display:flex;align-items:center}.calculator-container{max-width:1000px;margin:0 auto;width:100%}.calculator-grid{display:grid;grid-template-columns:1fr 400px;gap:var(--space-xl)}.calculator-controls{display:flex;flex-direction:column;gap:var(--space-lg)}.control-group{background:var(--bg-card);border-radius:var(--radius);padding:var(--space-lg)}.control-title{margin-bottom:var(--space-md);font-size:1.1rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:var(--space-sm)}.hours-selector{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-sm);margin-top:var(--space-md)}.hour-btn{padding:var(--space-sm);border:2px solid var(--border);background:var(--bg);border-radius:var(--radius);cursor:pointer;text-align:center;font-weight:600;transition:var(--transition)}.hour-btn.active{background:var(--gradient-primary);color:#fff;border-color:var(--primary)}.hour-btn:hover:not(.active){border-color:var(--primary)}.service-options{display:grid;gap:var(--space-sm)}.service-option{padding:var(--space-md);border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:var(--transition);display:flex;align-items:center;gap:var(--space-sm)}.service-option:hover{border-color:var(--primary)}.service-option.active{border-color:var(--primary);background:rgba(16,185,129,.05)}.service-icon{width:40px;height:40px;background:var(--gradient-primary);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#fff}.cleaners-selector{display:flex;align-items:center;gap:var(--space-md);margin-top:var(--space-md)}.cleaner-btn{width:40px;height:40px;border-radius:50%;border:2px solid var(--border);background:var(--bg);color:var(--text);font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition)}.cleaner-btn.active{background:var(--gradient-primary);color:#fff;border-color:var(--primary)}.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--space-sm);margin-top:var(--space-md)}.product-option{padding:var(--space-sm);border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:var(--transition);text-align:center}.product-option:hover{border-color:var(--primary)}.product-option.active{border-color:var(--primary);background:rgba(16,185,129,.05)}.calculator-result{background:var(--bg-card);border-radius:var(--radius);padding:var(--space-xl);position:sticky;top:100px}.price-breakdown{margin:var(--space-xl) 0}.price-item{display:flex;justify-content:space-between;padding:var(--space-sm) 0;border-bottom:1px solid var(--border)}.price-total{display:flex;justify-content:space-between;padding:var(--space-lg) 0;margin-top:var(--space-lg);border-top:2px solid var(--border);font-size:1.25rem;font-weight:700}.total-amount{font-size:2rem;color:var(--primary)}.schedule-section{padding:var(--space-3xl) 0}.schedule-container{max-width:1000px;margin:0 auto}.schedule-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-xl)}.week-navigation{display:flex;align-items:center;gap:var(--space-md)}.schedule-grid{display:grid;grid-template-columns:100px repeat(7,1fr);gap:var(--space-sm);background:var(--bg-card);border-radius:var(--radius);padding:var(--space-lg);box-shadow:var(--shadow)}.time-slot{padding:var(--space-sm);border-bottom:1px solid var(--border);text-align:center;color:var(--text-secondary);font-size:.9rem}.day-header{padding:var(--space-sm);text-align:center;font-weight:600;border-bottom:2px solid var(--primary)}.schedule-cell{padding:var(--space-sm);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition);min-height:60px;display:flex;align-items:center;justify-content:center}.schedule-cell.available{background:rgba(16,185,129,.1);border-color:var(--success)}.schedule-cell.booked{background:rgba(239,68,68,.1);border-color:var(--danger);cursor:not-allowed}.schedule-cell.selected{background:var(--gradient-primary);color:#fff;border-color:var(--primary)}.cleaner-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:var(--space-md);margin-top:var(--space-xl)}.cleaner-card{display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md);background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);transition:var(--transition)}.cleaner-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}.cleaner-avatar{width:60px;height:60px;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:1.2rem;flex-shrink:0}.footer{background:var(--bg-secondary);padding:var(--space-2xl) 0;border-top:1px solid var(--border)}.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-xl);margin-bottom:var(--space-xl)}.footer-section h3{color:var(--primary);margin-bottom:var(--space-md)}.footer-links{list-style:none}.footer-links li{margin-bottom:var(--space-xs)}.footer-links a{color:var(--text-secondary);text-decoration:none;transition:var(--transition);display:flex;align-items:center;gap:var(--space-xs)}.footer-links a:hover{color:var(--primary)}.copyright{text-align:center;padding-top:var(--space-lg);border-top:1px solid var(--border);color:var(--text-secondary)}.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);backdrop-filter:blur(5px);z-index:2000;align-items:center;justify-content:center;padding:var(--space-md)}.modal.open{display:flex;animation:fadeIn .3s ease}.modal-content{background:var(--bg-card);border-radius:var(--radius-lg);padding:var(--space-xl);max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-xl)}.themes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-sm);margin-top:var(--space-lg)}.theme-option{padding:var(--space-md);border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:var(--transition);text-align:center}.theme-option:hover{transform:translateY(-2px)}.theme-option.active{border-color:var(--primary);box-shadow:var(--shadow)}.notification{position:fixed;top:20px;right:20px;padding:var(--space-md) var(--space-lg);border-radius:var(--radius);box-shadow:var(--shadow-lg);z-index:3000;animation:slideIn .3s ease;max-width:400px}.notification.success{background:#10B981;color:#fff}.notification.error{background:#EF4444;color:#fff}.notification.warning{background:#F59E0B;color:#fff}.notification.info{background:#3B82F6;color:#fff}.scroll-animate{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}.scroll-animate.visible{opacity:1;transform:translateY(0)}.theme-btn-mobile{display:none;position:fixed;bottom:var(--space-lg);right:var(--space-lg);width:56px;height:56px;border-radius:50%;background:var(--gradient-primary);color:#fff;border:0;cursor:pointer;z-index:999;box-shadow:var(--shadow-xl);animation:float 3s ease-in-out infinite}@media (max-width:1024px){.calculator-grid{grid-template-columns:1fr}.schedule-grid{overflow-x:auto}.footer-grid{grid-template-columns:repeat(2,1fr)}.theme-controls{top:80px;right:var(--space-sm);flex-direction:row;flex-wrap:wrap;width:auto}}@media (max-width:768px){.hours-selector{grid-template-columns:repeat(2,1fr)}.products-grid{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr}.schedule-header{flex-direction:column;gap:var(--space-md);text-align:center}.theme-controls{top:70px;flex-wrap:wrap;justify-content:center}.nav-menu{flex-wrap:wrap}}@media (max-width:480px){body{padding-top:70px}.hours-selector{grid-template-columns:1fr}.products-grid{grid-template-columns:1fr}.cleaners-selector{flex-wrap:wrap;justify-content:center}.theme-controls{display:none}.theme-btn-mobile{display:block!important}.calculator-grid{gap:var(--space-md)}.logo-text h1{font-size:1.2rem}.nav-menu{flex-direction:column;width:100%}.nav-menu .btn{width:100%}.header-content{flex-direction:column;gap:var(--space-sm)}}
+    </style>
+</head>
+<body data-theme="light">
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <a class="logo" href="#calculator">
+                    <div class="logo-icon"><i class="fas fa-sparkles"></i></div>
+                    <div class="logo-text">
+                        <h1>LeidyCleaner</h1>
+                        <span>Sistema Inteligente v2.0</span>
+                    </div>
+                </a>
+                <div class="nav-menu">
+                    <button class="btn btn-primary" onclick="scrollToCalculator()"><i class="fas fa-calculator"></i> Calcular</button>
+                    <button class="btn btn-secondary" onclick="scrollToSchedule()"><i class="fas fa-calendar"></i> Agenda</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="theme-controls" id="themeControls">
+        <button class="theme-btn active" data-theme="light" title="Claro" onclick="changeTheme('light')"><i class="fas fa-sun"></i></button>
+        <button class="theme-btn" data-theme="soft" title="Suave" onclick="changeTheme('soft')"><i class="fas fa-cloud"></i></button>
+        <button class="theme-btn" data-theme="neutral" title="Neutro" onclick="changeTheme('neutral')"><i class="fas fa-circle"></i></button>
+        <button class="theme-btn" data-theme="high-contrast" title="Alto Contraste" onclick="changeTheme('high-contrast')"><i class="fas fa-adjust"></i></button>
+        <button class="theme-btn" data-theme="pastel" title="Pastel" onclick="changeTheme('pastel')"><i class="fas fa-palette"></i></button>
+        <button class="theme-btn" data-theme="dark" title="Escuro" onclick="changeTheme('dark')"><i class="fas fa-moon"></i></button>
+    </div>
+
+    <button class="theme-btn-mobile" onclick="openModal('themesModal')"><i class="fas fa-palette"></i></button>
+
+    <div id="themesModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:var(--primary);margin-bottom:var(--space-lg)"><i class="fas fa-palette"></i> Escolha seu Tema</h2>
+            <div class="themes-grid">
+                <div class="theme-option active" data-theme="light" onclick="changeTheme('light')"><i class="fas fa-sun" style="font-size:2rem;margin-bottom:5px"></i><div>Claro</div></div>
+                <div class="theme-option" data-theme="soft" onclick="changeTheme('soft')"><i class="fas fa-cloud" style="font-size:2rem;margin-bottom:5px"></i><div>Suave</div></div>
+                <div class="theme-option" data-theme="neutral" onclick="changeTheme('neutral')"><i class="fas fa-circle" style="font-size:2rem;margin-bottom:5px"></i><div>Neutro</div></div>
+                <div class="theme-option" data-theme="high-contrast" onclick="changeTheme('high-contrast')"><i class="fas fa-adjust" style="font-size:2rem;margin-bottom:5px"></i><div>Alto Contraste</div></div>
+                <div class="theme-option" data-theme="pastel" onclick="changeTheme('pastel')"><i class="fas fa-palette" style="font-size:2rem;margin-bottom:5px"></i><div>Pastel</div></div>
+                <div class="theme-option" data-theme="dark" onclick="changeTheme('dark')"><i class="fas fa-moon" style="font-size:2rem;margin-bottom:5px"></i><div>Escuro</div></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:var(--space-xl)" onclick="closeModal('themesModal')"><i class="fas fa-check"></i> Confirmar</button>
+        </div>
+    </div>
+
+    <section class="calculator-section" id="calculator">
+        <div class="container">
+            <div class="calculator-container">
+                <div class="calculator-grid">
+                    <div class="calculator-controls">
+                        <div class="control-group">
+                            <h3 class="control-title"><i class="fas fa-clock"></i> Quantas horas?</h3>
+                            <div class="hours-selector">
+                                <button class="hour-btn active" data-hours="2" onclick="selectHours(2)">2h</button>
+                                <button class="hour-btn" data-hours="4" onclick="selectHours(4)">4h</button>
+                                <button class="hour-btn" data-hours="6" onclick="selectHours(6)">6h</button>
+                                <button class="hour-btn" data-hours="8" onclick="selectHours(8)">8h</button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h3 class="control-title"><i class="fas fa-broom"></i> Tipo de Faxina</h3>
+                            <div class="service-options">
+                                <div class="service-option active" data-service="normal" onclick="selectService('normal')">
+                                    <div class="service-icon"><i class="fas fa-home"></i></div>
+                                    <div><div style="font-weight:600">Faxina Normal</div><small style="color:var(--text-secondary)">Limpeza básica</small></div>
+                                </div>
+                                <div class="service-option" data-service="profunda" onclick="selectService('profunda')">
+                                    <div class="service-icon"><i class="fas fa-bath"></i></div>
+                                    <div><div style="font-weight:600">Faxina Profunda</div><small style="color:var(--text-secondary)">Limpeza completa</small></div>
+                                </div>
+                                <div class="service-option" data-service="posobra" onclick="selectService('posobra')">
+                                    <div class="service-icon"><i class="fas fa-hard-hat"></i></div>
+                                    <div><div style="font-weight:600">Pós-Obra</div><small style="color:var(--text-secondary)">Limpeza após reforma</small></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h3 class="control-title"><i class="fas fa-users"></i> Quantas faxineiras?</h3>
+                            <div class="cleaners-selector">
+                                <button class="cleaner-btn active" data-cleaners="1" onclick="selectCleaners(1)">1</button>
+                                <button class="cleaner-btn" data-cleaners="2" onclick="selectCleaners(2)">2</button>
+                                <button class="cleaner-btn" data-cleaners="3" onclick="selectCleaners(3)">3</button>
+                                <button class="cleaner-btn" data-cleaners="4" onclick="selectCleaners(4)">4</button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h3 class="control-title"><i class="fas fa-spray-can-sparkles"></i> Produtos Incluídos</h3>
+                            <div class="products-grid">
+                                <div class="product-option active" data-product="basico" onclick="toggleProduct('basico')">
+                                    <i class="fas fa-soap" style="font-size:1.5rem;margin-bottom:5px"></i>
+                                    <div>Básico</div>
+                                </div>
+                                <div class="product-option" data-product="especial" onclick="toggleProduct('especial')">
+                                    <i class="fas fa-flask" style="font-size:1.5rem;margin-bottom:5px"></i>
+                                    <div>Especial</div>
+                                </div>
+                                <div class="product-option" data-product="ecologico" onclick="toggleProduct('ecologico')">
+                                    <i class="fas fa-leaf" style="font-size:1.5rem;margin-bottom:5px"></i>
+                                    <div>Ecológico</div>
+                                </div>
+                                <div class="product-option" data-product="premium" onclick="toggleProduct('premium')">
+                                    <i class="fas fa-crown" style="font-size:1.5rem;margin-bottom:5px"></i>
+                                    <div>Premium</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="calculator-result">
+                        <h2 style="color:var(--primary);margin-bottom:var(--space-lg)"><i class="fas fa-receipt"></i> Orçamento</h2>
+                        <div class="price-breakdown">
+                            <div class="price-item"><span>Serviço base:</span><span id="basePrice">R$ 80,00</span></div>
+                            <div class="price-item"><span>Tipo de faxina:</span><span id="serviceTypePrice">R$ 0,00</span></div>
+                            <div class="price-item"><span>Faxineiras (<span id="cleanersCount">1</span>):</span><span id="cleanersPrice">R$ 0,00</span></div>
+                            <div class="price-item"><span>Produtos:</span><span id="productsPrice">R$ 0,00</span></div>
+                            <div class="price-item"><span>Taxa administrativa:</span><span id="adminFee">R$ 16,00</span></div>
+                        </div>
+                        <div class="price-total">
+                            <span>TOTAL:</span><span class="total-amount" id="totalPrice">R$ 96,00</span>
+                        </div>
+                        <div style="margin-top:var(--space-xl)">
+                            <button class="btn btn-primary btn-lg" style="width:100%" onclick="bookService()"><i class="fas fa-calendar-check"></i> Agendar Agora</button>
+                            <div style="text-align:center;margin-top:var(--space-sm)">
+                                <button class="btn btn-outline" onclick="saveQuote()"><i class="fas fa-save"></i> Salvar</button>
+                                <button class="btn btn-outline" onclick="shareQuote()"><i class="fas fa-share"></i> Compartilhar</button>
+                            </div>
+                        </div>
+                        <div style="margin-top:var(--space-lg);padding:var(--space-md);background:var(--bg-secondary);border-radius:var(--radius)">
+                            <div style="display:flex;align-items:center;gap:var(--space-sm);margin-bottom:var(--space-xs)"><i class="fas fa-info-circle" style="color:var(--info)"></i><span style="font-weight:600">Informações:</span></div>
+                            <small style="color:var(--text-secondary)">• Valor por hora: R$ 40,00<br>• Taxa administrativa: 20%<br>• Horário: 8h às 18h<br>• Agendamento mínimo: 2 horas</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="schedule-section" id="schedule">
+        <div class="container">
+            <div class="schedule-container">
+                <div class="schedule-header">
+                    <h2 style="color:var(--primary)"><i class="fas fa-calendar-alt"></i> Agenda das Faxineiras</h2>
+                    <div class="week-navigation">
+                        <button class="btn btn-outline" onclick="previousWeek()"><i class="fas fa-chevron-left"></i></button>
+                        <h3 id="currentWeek" style="min-width:200px;text-align:center">Semana Atual</h3>
+                        <button class="btn btn-outline" onclick="nextWeek()"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="schedule-grid" id="scheduleGrid"></div>
+
+                <div style="margin-top:var(--space-xl)">
+                    <h3 style="color:var(--primary);margin-bottom:var(--space-lg)"><i class="fas fa-users"></i> Nossas Faxineiras</h3>
+                    <div class="cleaner-list">
+                        <div class="cleaner-card">
+                            <div class="cleaner-avatar">M</div>
+                            <div>
+                                <div style="font-weight:600">Maria Silva</div>
+                                <small style="color:var(--text-secondary)">★★★★★ (4.9)</small>
+                                <div style="font-size:.9rem;margin-top:5px">Disponível hoje</div>
+                            </div>
+                        </div>
+                        <div class="cleaner-card">
+                            <div class="cleaner-avatar">A</div>
+                            <div>
+                                <div style="font-weight:600">Ana Santos</div>
+                                <small style="color:var(--text-secondary)">★★★★★ (4.8)</small>
+                                <div style="font-size:.9rem;margin-top:5px">Disponível amanhã</div>
+                            </div>
+                        </div>
+                        <div class="cleaner-card">
+                            <div class="cleaner-avatar">J</div>
+                            <div>
+                                <div style="font-weight:600">Joana Pereira</div>
+                                <small style="color:var(--text-secondary)">★★★★★ (5.0)</small>
+                                <div style="font-size:.9rem;margin-top:5px">Disponível hoje</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>LeidyCleaner</h3>
+                    <p style="color:var(--text-secondary);margin-top:var(--space-sm)">Sistema inteligente de faxina com agendamento rápido e cálculo automático.</p>
+                </div>
+                <div>
+                    <h3>Horários</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-clock"></i> Seg-Sex: 8h-18h</a></li>
+                        <li><a href="#"><i class="fas fa-clock"></i> Sábado: 8h-12h</a></li>
+                        <li><a href="#"><i class="fas fa-ban"></i> Domingo: Fechado</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Contato</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-phone"></i> (51) 99999-9999</a></li>
+                        <li><a href="#"><i class="fas fa-whatsapp"></i> WhatsApp</a></li>
+                        <li><a href="#"><i class="fas fa-envelope"></i> contato@leidycleaner.com</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Área de Atuação</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-map-marker"></i> Porto Alegre</a></li>
+                        <li><a href="#"><i class="fas fa-map-marker"></i> Canoas</a></li>
+                        <li><a href="#"><i class="fas fa-map-marker"></i> Novo Hamburgo</a></li>
+                        <li><a href="#"><i class="fas fa-map-marker"></i> São Leopoldo</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 Leidy Cleaner. Todos os direitos reservados.</p>
+                <p style="margin-top:var(--space-xs);font-size:.875rem">Sistema com 6 modos de aparência • Calculadora inteligente • Agenda integrada</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const CONFIG={HOUR_RATE:40,ADMIN_FEE_PERCENTAGE:.2,MAX_HOURS:8,SERVICE_MULTIPLIERS:{normal:1,profunda:1.5,posobra:2},CLEANER_RATES:{1:1,2:1.8,3:2.5,4:3},PRODUCT_PRICES:{basico:0,especial:15,ecologico:20,premium:30}};let appState={hours:2,service:'normal',cleaners:1,products:['basico'],currentWeek:new Date(),selectedSlots:[],theme:localStorage.getItem('leidycleaner_theme')||'light',currentQuote:null};document.addEventListener('DOMContentLoaded',function(){initTheme();initCalculator();initSchedule();window.addEventListener('scroll',function(){const h=document.getElementById('header');window.scrollY>100?h.classList.add('scrolled'):h.classList.remove('scrolled')})});function initTheme(){document.body.setAttribute('data-theme',appState.theme);updateThemeButtons();if(window.innerWidth<=480){document.querySelector('.theme-btn-mobile').style.display='block';document.querySelector('.theme-controls').style.display='none'}}function changeTheme(t){appState.theme=t;document.body.setAttribute('data-theme',t);localStorage.setItem('leidycleaner_theme',t);updateThemeButtons();closeModal('themesModal');showNotification(`Tema ${t} ativado`)}function updateThemeButtons(){document.querySelectorAll('.theme-btn').forEach(b=>{b.classList.remove('active');if(b.getAttribute('data-theme')===appState.theme)b.classList.add('active')});document.querySelectorAll('.theme-option').forEach(o=>{o.classList.remove('active');if(o.getAttribute('data-theme')===appState.theme)o.classList.add('active')})}function initCalculator(){updateCalculator()}function selectHours(h){appState.hours=Math.min(h,CONFIG.MAX_HOURS);document.querySelectorAll('.hour-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');updateCalculator()}function selectService(s){appState.service=s;document.querySelectorAll('.service-option').forEach(o=>o.classList.remove('active'));event.target.closest('.service-option').classList.add('active');updateCalculator()}function selectCleaners(c){appState.cleaners=c;document.querySelectorAll('.cleaner-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');updateCalculator()}function toggleProduct(p){const i=appState.products.indexOf(p);if(p==='basico'){if(i===-1)appState.products.push(p);updateProductUI();return}if(i===-1)appState.products.push(p);else appState.products.splice(i,1);updateProductUI();updateCalculator()}function updateProductUI(){document.querySelectorAll('.product-option').forEach(o=>{const p=o.getAttribute('data-product');if(p==='basico'){o.classList.add('active');return}if(appState.products.includes(p))o.classList.add('active');else o.classList.remove('active')})}function updateCalculator(){const{hours:h,service:s,cleaners:c,products:p}=appState;const bp=h*CONFIG.HOUR_RATE;const sm=CONFIG.SERVICE_MULTIPLIERS[s];const sp=bp*sm;const se=sp-bp;const cm=CONFIG.CLEANER_RATES[c];const cp=sp*cm;const ce=cp-sp;let prc=0;p.forEach(pr=>{prc+=CONFIG.PRODUCT_PRICES[pr]||0});const sub=cp+prc;const af=sub*CONFIG.ADMIN_FEE_PERCENTAGE;const tp=sub+af;appState.currentQuote={hours:h,service:s,cleaners:c,products:[...p],total:tp,breakdown:{base:bp,serviceExtra:se,cleanerExtra:ce,products:prc,adminFee:af,subtotal:sub}};document.getElementById('basePrice').textContent=`R$ ${bp.toFixed(2)}`;document.getElementById('serviceTypePrice').textContent=se>0?`+ R$ ${se.toFixed(2)}`:'R$ 0,00';document.getElementById('cleanersCount').textContent=c;document.getElementById('cleanersPrice').textContent=ce>0?`+ R$ ${ce.toFixed(2)}`:'R$ 0,00';document.getElementById('productsPrice').textContent=prc>0?`+ R$ ${prc.toFixed(2)}`:'R$ 0,00';document.getElementById('adminFee').textContent=`R$ ${af.toFixed(2)}`;document.getElementById('totalPrice').textContent=`R$ ${tp.toFixed(2)}`}function initSchedule(){generateScheduleGrid();updateWeekDisplay()}function generateScheduleGrid(){const sg=document.getElementById('scheduleGrid');sg.innerHTML='';const slot=document.createElement('div');slot.className='time-slot';slot.textContent='';sg.appendChild(slot);const days=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];const td=new Date(appState.currentWeek);days.forEach((d,i)=>{const dd=new Date(td);dd.setDate(td.getDate()+i);const dh=document.createElement('div');dh.className='day-header';dh.innerHTML=`<div>${d}</div><small style="color:var(--text-secondary)">${dd.getDate()}</small>`;sg.appendChild(dh)});const ts=['08:00','10:00','12:00','14:00','16:00'];ts.forEach(t=>{const ts2=document.createElement('div');ts2.className='time-slot';ts2.textContent=t;sg.appendChild(ts2);for(let i=0;i<7;i++){const c=document.createElement('div');c.className='schedule-cell';const ia=Math.random()>.2;const ib=Math.random()>.7;if(ib){c.className+=' booked';c.innerHTML='<small>Reservado</small>'}else if(ia){c.className+=' available';c.innerHTML='<small>Disponível</small>';c.onclick=()=>selectTimeSlot(c,i,t)}else{c.innerHTML='<small>Indisponível</small>';c.style.opacity='.5'}sg.appendChild(c)}})}function selectTimeSlot(c,d,t){if(c.classList.contains('selected')){c.classList.remove('selected');c.innerHTML='<small>Disponível</small>';const i=appState.selectedSlots.findIndex(s=>s.day===d&&s.time===t);if(i>-1)appState.selectedSlots.splice(i,1)}else{c.classList.add('selected');c.innerHTML='<small>Selecionado</small>';appState.selectedSlots.push({day:d,time:t,element:c})}}function updateWeekDisplay(){const ws=new Date(appState.currentWeek);ws.setDate(ws.getDate()-ws.getDay()+1);const we=new Date(ws);we.setDate(we.getDate()+6);const opts={day:'numeric',month:'short'};const ss=ws.toLocaleDateString('pt-BR',opts);const es=we.toLocaleDateString('pt-BR',opts);document.getElementById('currentWeek').textContent=`${ss} - ${es}`}function previousWeek(){appState.currentWeek.setDate(appState.currentWeek.getDate()-7);updateWeekDisplay();generateScheduleGrid()}function nextWeek(){appState.currentWeek.setDate(appState.currentWeek.getDate()+7);updateWeekDisplay();generateScheduleGrid()}function bookService(){if(!appState.currentQuote){showNotification('Calcule um orçamento primeiro','warning');return}if(appState.selectedSlots.length===0){showNotification('Selecione um horário na agenda','warning');scrollToSchedule();return}showNotification('Serviço agendado com sucesso!','success');appState.selectedSlots.forEach(s=>{s.element.classList.remove('selected');s.element.innerHTML='<small>Disponível</small>'});appState.selectedSlots=[]}function saveQuote(){if(!appState.currentQuote){showNotification('Calcule um orçamento primeiro','warning');return}const qs=JSON.parse(localStorage.getItem('leidycleaner_quotes'))||[];const qwid={...appState.currentQuote,id:Date.now(),savedAt:new Date().toISOString()};qs.push(qwid);localStorage.setItem('leidycleaner_quotes',JSON.stringify(qs));showNotification('Orçamento salvo com sucesso!','success')}function shareQuote(){if(!appState.currentQuote){showNotification('Calcule um orçamento primeiro','warning');return}const q=appState.currentQuote;const st=`Orçamento Leidy Cleaner:\n\n• ${q.hours}h de faxina\n• Tipo: ${q.service}\n• ${q.cleaners} faxineira(s)\n• Total: R$ ${q.total.toFixed(2)}\n\nAgende em: leidycleaner.com`;if(navigator.share){navigator.share({title:'Orçamento Leidy Cleaner',text:st,url:window.location.href})}else{navigator.clipboard.writeText(st).then(()=>{showNotification('Orçamento copiado para área de transferência!','info')})}}function scrollToCalculator(){document.getElementById('calculator').scrollIntoView({behavior:'smooth'})}function scrollToSchedule(){document.getElementById('schedule').scrollIntoView({behavior:'smooth'})}function openModal(mid){document.getElementById(mid).classList.add('open')}function closeModal(mid){document.getElementById(mid).classList.remove('open')}function showNotification(m,t='info'){const n=document.createElement('div');n.className=`notification ${t}`;n.textContent=m;document.body.appendChild(n);setTimeout(()=>{n.style.opacity='0';n.style.transition='opacity .3s';setTimeout(()=>n.remove(),300)},3000)}document.querySelector('.theme-btn-mobile').addEventListener('click',()=>openModal('themesModal'));window.addEventListener('resize',function(){if(window.innerWidth<=480){document.querySelector('.theme-btn-mobile').style.display='block';document.querySelector('.theme-controls').style.display='none'}else{document.querySelector('.theme-btn-mobile').style.display='none';document.querySelector('.theme-controls').style.display='flex'}});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal('themesModal')});document.querySelectorAll('.modal').forEach(m=>{m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('open')})})
+    </script>
+</body>
+</html>
