@@ -7,6 +7,9 @@ import Dashboard from './pages/Dashboard';
 import Cleaners from './pages/Cleaners';
 import Checkout from './pages/Checkout';
 import Payment from './pages/Payment';
+import CleanerDashboard from './pages/CleanerDashboard';
+import CleanerSchedule from './pages/CleanerSchedule';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   const { validateToken, token } = useAuthStore();
@@ -26,6 +29,9 @@ function App() {
         <Route path="/cleaners" element={token ? <Cleaners /> : <Navigate to="/login" />} />
         <Route path="/checkout" element={token ? <Checkout /> : <Navigate to="/login" />} />
         <Route path="/payment/:bookingId" element={token ? <Payment /> : <Navigate to="/login" />} />
+        <Route path="/cleaner/dashboard" element={token ? <CleanerDashboard /> : <Navigate to="/login" />} />
+        <Route path="/cleaner/schedule" element={token ? <CleanerSchedule /> : <Navigate to="/login" />} />
+        <Route path="/admin/dashboard" element={token ? <AdminDashboard /> : <Navigate to="/login" />} />
         <Route path="/" element={token ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
