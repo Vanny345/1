@@ -54,7 +54,13 @@ const Cleaners = () => {
       setTimeout(() => {
         navigate(`/payment/${bookingId}`, { 
           state: { 
-            booking: bookingData,
+            booking: {
+              id: bookingId,
+              cleanerId: selectedCleaner.id,
+              ...bookingForm,
+              price: 150.00,
+              estimatedPrice: 150.00
+            },
             cleaner: selectedCleaner 
           } 
         });
