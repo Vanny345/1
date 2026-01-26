@@ -10,6 +10,9 @@ import Payment from './pages/Payment';
 import CleanerDashboard from './pages/CleanerDashboard';
 import CleanerSchedule from './pages/CleanerSchedule';
 import AdminDashboard from './pages/AdminDashboard';
+import ReferralSystem from './pages/ReferralSystem';
+import BookingHistory from './pages/BookingHistory';
+import ChatWindow from './pages/ChatWindow';
 
 function App() {
   const { validateToken, token } = useAuthStore();
@@ -31,6 +34,9 @@ function App() {
         <Route path="/payment/:bookingId" element={token ? <Payment /> : <Navigate to="/login" />} />
         <Route path="/cleaner/dashboard" element={token ? <CleanerDashboard /> : <Navigate to="/login" />} />
         <Route path="/cleaner/schedule" element={token ? <CleanerSchedule /> : <Navigate to="/login" />} />
+        <Route path="/cleaner/referral" element={token ? <ReferralSystem /> : <Navigate to="/login" />} />
+        <Route path="/cleaner/history" element={token ? <BookingHistory /> : <Navigate to="/login" />} />
+        <Route path="/chat" element={token ? <ChatWindow /> : <Navigate to="/login" />} />
         <Route path="/admin/dashboard" element={token ? <AdminDashboard /> : <Navigate to="/login" />} />
         <Route path="/" element={token ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
       </Routes>

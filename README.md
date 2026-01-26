@@ -1,8 +1,8 @@
-# 🎉 Leidy Cleaner - Plataforma Completa
+# Plataforma de Agendamento de Limpeza 🏠
 
-Plataforma profissional de agendamento de serviços de limpeza com backend, frontend, pagamentos, emails, WhatsApp e muito mais.
+Um aplicativo completo para conectar clientes com faxineiras, com pagamento integrado, chat em tempo real e sistema de referral.
 
-## ⚡ Quick Start (3 passos)
+## 🚀 Quick Start (5 Minutos)
 
 ### 1. Com Docker (Recomendado)
 ```bash
