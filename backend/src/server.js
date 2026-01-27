@@ -17,6 +17,7 @@ const disputeRoutes = require('./routes/disputes');
 const bonusRoutes = require('./routes/bonuses');
 const scheduleRoutes = require('./routes/schedules');
 const metricsRoutes = require('./routes/metrics');
+const featuresRoutes = require('./routes/features');
 
 // Initialize Express
 const app = express();
@@ -44,6 +45,7 @@ app.use('/api/disputes', disputeRoutes);
 app.use('/api/bonuses', bonusRoutes);
 app.use('/api/schedules', scheduleRoutes);
 app.use('/api/metrics', metricsRoutes);
+app.use('/api/features', featuresRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
