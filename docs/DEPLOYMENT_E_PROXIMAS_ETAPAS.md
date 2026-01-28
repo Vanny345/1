@@ -181,7 +181,7 @@ Tempo: 2 dias
 #### 1. UI/UX Refinement
 - [ ] Animações suaves
 - [ ] Loading states
-- [ ] Error handling
+- [ ] Error  handling
 - [ ] Toast messages
 
 #### 2. Performance
