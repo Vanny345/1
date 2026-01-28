@@ -1,0 +1,144 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║                   📦 ARQUIVOS CRIADOS PARA RESOLVER ERRO 403                 ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 DOCUMENTAÇÃO (Leia nesta ordem)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. COMECE_AQUI_ERRO_403.txt (visual)
+   └─ Visual bonito com passos rápidos
+   └─ Leia primeiro: 2 minutos
+
+2. ERRO_403_RESUMO.md
+   └─ Resumo executivo do problema e solução
+   └─ Tempo: 5 minutos
+
+3. CORRECAO_ERRO_403.md
+   └─ Explicação técnica completa
+   └─ O que mudou, por quê, como testar
+   └─ Tempo: 10 minutos
+
+4. DEPLOY_PRODUCAO_CORRIGIDO.md
+   └─ Guia passo a passo de deploy
+   └─ Comece aqui para fazer deploy
+   └─ Tempo: 15 minutos
+
+5. CHECKLIST_DEPLOY.md
+   └─ Checklist durante e após deploy
+   └─ Use como referência
+   └─ Tempo: variável
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔧 SCRIPTS EXECUTÁVEIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ./test-deploy.sh
+   └─ Valida pré-deploy
+   └─ Verifica todos os arquivos
+   └─ Compila Docker images
+   └─ Uso: ./test-deploy.sh
+
+2. ./deploy.sh
+   └─ Script principal de deploy
+   └─ Comandos:
+      - start     → Inicia o sistema
+      - stop      → Para o sistema
+      - restart   → Reinicia
+      - logs      → Ver logs
+      - health    → Verificar saúde
+      - backup    → Fazer backup BD
+      - shell     → Shell do backend
+   └─ Uso: ./deploy.sh start
+
+3. ./test-error-403.sh
+   └─ Testa se erro 403 foi resolvido
+   └─ Faz requisições para verificar CORS
+   └─ Uso: ./test-error-403.sh
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚙️  ARQUIVOS DE CONFIGURAÇÃO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. nginx.conf (5.0 KB)
+   └─ Configuração do Nginx (reverse proxy + SSL)
+   └─ Configuração de CORS headers
+   └─ Rate limiting
+   └─ Cache de assets
+   └─ Gzip compression
+   └─ Arquivo: /workspaces/1/nginx.conf
+
+2. docker-compose.production.yml (2.4 KB)
+   └─ Docker Compose otimizado para produção
+   └─ Health checks configurados
+   └─ Restart policies
+   └─ Networks isoladas
+   └─ Arquivo: /workspaces/1/docker-compose.production.yml
+
+3. backend/.env.production (1.1 KB)
+   └─ Variáveis de ambiente para produção
+   └─ NODE_ENV=production
+   └─ URLs: api.cleanerleidy.com.br
+   └─ JWT_SECRET, Database, APIs
+   └─ Arquivo: /workspaces/1/backend/.env.production
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔀 ARQUIVOS MODIFICADOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. backend/src/server.js
+   └─ CORS configurado para múltiplas origens
+   └─ Agora permite:
+      - cleanerleidy.com.br
+      - www.cleanerleidy.com.br
+      - api.cleanerleidy.com.br
+      - localhost:3000
+   └─ Credenciais habilitadas
+   └─ Todos os métodos HTTP
+
+2. backend/.env.example
+   └─ Adicionados comentários para produção
+   └─ Instruções de como configurar
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 SUMÁRIO DE MUDANÇAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Novos Arquivos:  8 (docs + scripts + configs)
+Modificados:     2 (server.js, .env.example)
+Total de Linhas:  ~5000 (documentação + código)
+Tempo Estimado:  15-30 minutos para deploy
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 COMO COMEÇAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASSO 1: Leia a documentação
+   $ cat COMECE_AQUI_ERRO_403.txt
+
+PASSO 2: Valide pré-deploy
+   $ ./test-deploy.sh
+
+PASSO 3: Configure certificados SSL
+   $ mkdir -p ssl
+   # Copie cert.pem e key.pem
+
+PASSO 4: Configure variáveis de produção
+   $ nano backend/.env.production
+   # Edite JWT_SECRET, DATABASE_URL, etc.
+
+PASSO 5: Faça deploy
+   $ ./deploy.sh start
+
+PASSO 6: Verifique saúde
+   $ ./deploy.sh health
+
+PASSO 7: Teste no navegador
+   https://cleanerleidy.com.br
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ Sucesso! Seu site deve estar funcionando agora. ✨
+
